@@ -1,0 +1,122 @@
+>>> HW 2 - BN75779
+
+## PROBLEM 1 ##
+My source code:
+
+~~~verilog
+// File: problem1_if_else.v
+// Description: Behavioral implementation using if-else statements
+module problem1_if_else (
+    input wire a, b, c,  // Inputs
+    output reg u, v       // Outputs (reg because they are assigned in an always block)
+);
+
+    // Always block to describe the behavior
+    always @(*) begin
+        // Default values for outputs
+        u = 0;
+        v = 0;
+
+        // Truth table implementation
+        if (a == 1 && b == 1 && c == 1) begin
+            u = 0;
+            v = 1;
+        end
+        else if (a == 1 && b == 1 && c == 0) begin
+            u = 1;
+            v = 1;
+        end
+        else if (a == 1 && b == 0 && c == 0) begin
+            u = 0;
+            v = 0;
+        end
+        // For all other cases, u = 0 and v = Don't Care (already set by default)
+    end
+
+endmodule
+~~~
+
+~~~verilog
+// File: problem1_assign.v
+// Description: Implementation using concurrent continuous assignment statements
+
+module problem1_assign (
+    input wire a, b, c,  // Inputs
+    output wire u, v     // Outputs
+);
+
+    // Continuous assignments for outputs
+    assign u = (a & b & ~c) ? 1 : 0;  // u = 1 when a=1, b=1, c=0; otherwise u=0
+    assign v = (a & b) ? 1 : 0;       // v = 1 when a=1, b=1; otherwise v=0
+~~~
+
+My test bench:
+
+~~~verilog
+// File: tb_problem.v
+module tb_problem1;
+
+    // Declare inputs and outputs
+    reg a, b, c;
+    wire u_if_else, v_if_else;
+    wire u_assign, v_assign;
+
+    // Instantiate both modules
+    problem1_if_else uut_if_else (
+        .a(a),
+        .b(b),
+        .c(c),
+        .u(u_if_else),
+        .v(v_if_else)
+    );
+
+    problem1_assign uut_assign (
+        .a(a),
+        .b(b),
+        .c(c),
+        .u(u_assign),
+        .v(v_assign)
+    );
+
+    // Test all possible input combinations
+    initial begin
+        // Test case 1: a=1, b=1, c=1
+        a = 1; b = 1; c = 1;
+        #10;
+        $display("Input: a=%b, b=%b, c=%b | Output (if-else): u=%b, v=%b | Output (assign): u=%b, v=%b",
+                 a, b, c, u_if_else, v_if_else, u_assign, v_assign);
+
+        // Test case 2: a=1, b=1, c=0
+        a = 1; b = 1; c = 0;
+        #10;
+        $display("Input: a=%b, b=%b, c=%b | Output (if-else): u=%b, v=%b | Output (assign): u=%b, v=%b",
+                 a, b, c, u_if_else, v_if_else, u_assign, v_assign);
+
+        // Test case 3: a=1, b=0, c=0
+        a = 1; b = 0; c = 0;
+        #10;
+        $display("Input: a=%b, b=%b, c=%b | Output (if-else): u=%b, v=%b | Output (assign): u=%b, v=%b",
+                 a, b, c, u_if_else, v_if_else, u_assign, v_assign);
+
+        // Test case 4: a=0, b=0, c=0
+        a = 0; b = 0; c = 0;
+        #10;
+        $display("Input: a=%b, b=%b, c=%b | Output (if-else): u=%b, v=%b | Output (assign): u=%b, v=%b",
+                 a, b, c, u_if_else, v_if_else, u_assign, v_assign);
+
+        $finish;
+    end
+
+endmodule
+~~~
+
+Results:
+~~~
+Input: a=1, b=1, c=1 | Output (if-else): u=0, v=1 | Output (assign): u=0, v=1
+Input: a=1, b=1, c=0 | Output (if-else): u=1, v=1 | Output (assign): u=1, v=1
+Input: a=1, b=0, c=0 | Output (if-else): u=0, v=0 | Output (assign): u=0, v=0
+Input: a=0, b=0, c=0 | Output (if-else): u=0, v=0 | Output (assign): u=0, v=0
+~~~
+
+RTL View:
+problem1.png
