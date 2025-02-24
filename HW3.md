@@ -23,9 +23,6 @@ module DUT (u, v, a, b, clk);
          _u = 2'b1x;  
          _v = 2'b01;
       end 
-      else begin
-         _v = 2'b01;  
-      end
       u <= _u;
       v <= _v;
    end
