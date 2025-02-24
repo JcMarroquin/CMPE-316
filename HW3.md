@@ -1,5 +1,6 @@
-
+ 
 # HW 3 - COMPLETE
+
 ## Problem 1
 Source code:
 Module was properly updated for Verilog, by using $reg$ instead of $logic$
