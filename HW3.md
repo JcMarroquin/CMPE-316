@@ -1,18 +1,38 @@
-# HW 2
+# HW 3
 
-## Problem 99
+## Problem 1
 
 My source code:
 
+Module was properly updated for Verilog, by using $reg$ instead of 'logic'
 ```verilog
-//Filename: p1.sv
-module....
-...
-alawys_ff @ ...begin
-...
-end
+module DUT (u, v, a, b, clk);
+   input a, b, clk;
+   output reg [1:0] u, v;  // Use 'reg' since we assign in always block
 
+   reg [1:0] _u, _v;  // Declare persistent registers
+
+   always @(posedge clk) begin
+      _u = 2'b00;  // Explicit initialization
+
+      if (a == 1) begin
+         _u = 2'b00;
+         _v = 2'b10;
+      end 
+      else if (b == 1) begin
+         _u = 2'b11;  // Avoid 'x' values for predictable output
+         _v = 2'b01;
+      end 
+      else begin
+         _v = 2'b00;  // Explicitly set v in the default case
+      end
+
+      u <= _u;
+      v <= _v;
+   end
 endmodule
+
+
 ```
 
 My test bench:
