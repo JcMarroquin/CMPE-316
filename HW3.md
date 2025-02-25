@@ -82,37 +82,6 @@ Time=45000 | a=1 b=1 | _u=00 _v=10 | u=00 v=10
 ```
 
 ## Problem 2
-Source code:
-Module was properly updated for Verilog, by using $reg$ instead of $logic$
-As well as updating some syntax.
-```verilog
-module DUT (u, v, a, b, clk);
-   input a, b, clk;
-   output reg [1:0] u, v; 
-
-   // Declare internal registers
-   reg [1:0] _u, _v;  
-
-   always @(posedge clk) begin
-      _u = 2'b00;  
-
-      if (a == 1) begin
-         _u = 2'b00;
-         _v = 2'b10;
-      end 
-      else if (b == 1) begin
-         _u = 2'b1x;  
-         _v = 2'b01;
-      end 
-      else begin
-         _v = 2'b01;  
-      end
-      u <= _u;
-      v <= _v;
-   end
-endmodule
-```
-
 My test bench:
 ```verilog
 `timescale 1ns/1ps
@@ -176,37 +145,6 @@ Time=45000 | Strobe Output | a=1 b=1 | u=00 v=10
 
 
 ## Problem 3
-Source code:
-Module was properly updated for Verilog, by using $reg$ instead of $logic$
-As well as updating some syntax.
-```verilog
-module DUT (u, v, a, b, clk);
-   input a, b, clk;
-   output reg [1:0] u, v; 
-
-   // Declare internal registers
-   reg [1:0] _u, _v;  
-
-   always @(posedge clk) begin
-      _u = 2'b00;  
-
-      if (a == 1) begin
-         _u = 2'b00;
-         _v = 2'b10;
-      end 
-      else if (b == 1) begin
-         _u = 2'b1x;  
-         _v = 2'b01;
-      end 
-      else begin
-         _v = 2'b01;  
-      end
-      u <= _u;
-      v <= _v;
-   end
-endmodule
-```
-
 My test bench:
 ```verilog
 `timescale 1ns/1ps
@@ -265,7 +203,18 @@ Time=30000 | Strobe Output | a=1 b=1 | u=00 v=10
 Time=35000 | Before Strobe | a=1 b=1 | u=00 v=10
 ```
 
+Comparison: Pre-Synthesis vs. Post-Synthesis Behavior
+Delay in Output Change
+In the pre-synthesis simulation, the output u and v initially appear as xx (undefined) until the first clock cycle, then they change at each rising edge of clk, showing expected logic behavior.
+In the post-synthesis simulation, u and v have deterministic values (00 and 10) right from the start, suggesting the synthesized logic initializes them differently.
 
+Glitches and Intermediate Values
+Pre-synthesis results show u taking on 1x at some points, indicating intermediate or undefined logic values due to incomplete assignments in combinational logic.
+Post-synthesis eliminates these glitches, enforcing a more stable state.
+
+Timing Differences
+In pre-synthesis, the changes in u and v occur immediately at the clock edge (Time=5000 | Strobe Output reflects the correct values).
+In post-synthesis, the changes appear delayed or unchanged.
 
 ## Appendix 
 
